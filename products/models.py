@@ -1,15 +1,92 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
 from django.core.validators import MinValueValidator
+from datetime import datetime
 
-
-class Question(models.Model):
+class Product(models.Model):
+    category_list = [("laptops","laptops") , 
+    ("phones" , "phones") , ("tablets" , "tablets") , ("accessories" , "accessories")]
     name = models.CharField(max_length=200)
-    price = models.FloatField(validators=[MinValueValidator(0)])
-    category = models.CharField(max_length=64, blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
+    category = models.CharField(max_length=64, choices=category_list , default="accessories")
     date = models.DateTimeField(default=datetime.now)
     description = models.TextField()
+    image1 = models.ImageField(upload_to='images/%d',blank = True , null = True)
+    image2 = models.ImageField(upload_to='images/%d',blank = True , null = True)
+    image3 = models.ImageField(upload_to='images/%d',blank = True , null = True)
+    image4 = models.ImageField(upload_to='images/%d',blank = True , null = True)
+
+    # thumbnail_image = models.ImageField( blank=True, null=True)
+
+
+
+
+
+    # def save(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     from PIL import Image
+    #     import os
+    #     img = Image.open(self.image.path)
+    #     if img.height > 300 or img.width > 300:
+    #         output_size = (300, 300)
+    #         img.thumbnail(output_size)
+    #         self.thumbnail_image.name = "images/thumbnail_" + self.image.name
+    #         img.save("images/thumbnail_" + self.image.name)
+            
+    #         print(os.path.join(self.image.path , ".\\"))
 
     def __str__(self):
-        return f"{self.name} - {self.owner}"
+        return f"{self.name} - {self.price} - {self.category} : {self.id}"
 
 
+
+
+
+
+
+class User(AbstractBaseUser):
+    last_login = models.DateTimeField(auto_now=True)
+    username = models.CharField(max_length=200, unique=True,default="Tru@e.s")
+    email = models.EmailField(max_length = 60 , unique=True ,default="Tru@e.s")
+    is_admin = models.BooleanField(default=False)
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    def __str__(self):
+        return f"{self.username}"
+
+
+
+
+
+
+class Cart(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    date = models.DateTimeField(default=datetime.now)
+
+    def __str__(self):
+        return f"{self.user} - {self.product} - {self.quantity}"
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    date = models.DateTimeField(default=datetime.now)
+
+    def __str__(self):
+        return f"{self.user} - {self.product} - {self.quantity}"
+
+
+
+
+class Comment(models.Model):
+    text = models.TextField()
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments")
+    date = models.DateTimeField(default=datetime.now)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rate = models.IntegerField(default=5)
+    def __str__(self):
+        return f"{self.text}\n{self.user}  - {self.date}"

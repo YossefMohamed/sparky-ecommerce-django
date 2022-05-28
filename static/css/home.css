@@ -1,0 +1,71 @@
+.carousel-image {
+  width: 80%;
+  height: 350px;
+  -o-object-fit: scale-down;
+     object-fit: scale-down;
+  background-color: #cdcdcd;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.card-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin: auto;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.card-container .card {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin-bottom: 25px;
+}
+
+.card-container .card img {
+  width: 100%;
+  max-height: 250px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
+.section-title {
+  margin: 50px 0;
+}
+
+.pagination {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.pagination .page-item .page-link {
+  color: #fff;
+  background-color: #000;
+  padding: 10px 20px;
+}
+
+.pagination .page-item .page-link:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.pagination .active .page-link {
+  background-color: #fff;
+  color: #000;
+  border-color: #000;
+}
+/*# sourceMappingURL=home.css.map */
