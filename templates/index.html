@@ -62,15 +62,11 @@
 <div class="card-container">
   {% for product in products %}
   <div class="card">
-    <img
-      class="card-img-top"
-      src="https://www.w3schools.com/images/w3lynx_200.png"
-      alt="Card image"
-    />
+    <img class="card-img-top" src="{{ product.image1.url }}" alt="Card image" />
     <div class="card-body">
       <h4 class="card-title">{{product.name}}</h4>
+      {{ product.image1.url }}
       <p class="card-text">{{product.description}}</p>
-
       <a href="/{{product.id}}" class="card-link btn btn-dark">Card link</a>
     </div>
   </div>

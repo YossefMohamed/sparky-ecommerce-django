@@ -9,7 +9,7 @@
               <div class="d-flex flex-column justify-content-center">
                 <div class="main_image">
                   <img
-                    src="https://i.imgur.com/6ZufmNS.jpg"
+                  src="{{ product.image1.url }}"
                     id="main_product_image"
                     width="350"
                   />
@@ -19,23 +19,20 @@
                     <li>
                       <img
                         onclick="changeImage(this)"
-                        src="https://i.imgur.com/6ZufmNS.jpg"
-                        width="70"
+                        src="{{ product.image2.url }}"                        width="70"
                       />
                     </li>
                     
                     <li>
                       <img
                         onclick="changeImage(this)"
-                        src="https://i.imgur.com/L7hFD8X.jpg"
-                        width="70"
+                        src="{{ product.image3.url }}"                        width="70"
                       />
                     </li>
                     <li>
                       <img
                         onclick="changeImage(this)"
-                        src="https://i.imgur.com/6ZufmNS.jpg"
-                        width="70"
+                        src="{{ product.image4.url }}"                        width="70"
                       />
                     </li>
                   </ul>
@@ -46,7 +43,11 @@
               <div
                 class="p-3 right-side d-flex flex-column justify-space-between flex-1"
               >
+              <div id="message-container">
+                
+              </div>
                 <div class="d-flex justify-content-between align-items-center">
+                 
                   <h3>{{product.name}}</h3>
                   <span class="heart"><i class="bx bx-heart"></i></span>
                 </div>
@@ -76,9 +77,23 @@
                     </ul>
                   </div>
                 </div>
+                <div>
+
+                    
+                      <div class="form-group my-3">
+                        <label for="quantity">Quantity</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="quantity"
+                          name="quantity"
+                          value="1"
+                        />
+
+                </div>
                 <div class="buttons d-flex flex-row mt-auto gap-3 bg-">
                   <button class="btn btn-outline-dark">Buy Now</button>
-                  <button class="btn btn-dark">Add to Basket</button>
+                  <button class="btn btn-dark" onclick="add_to_cart()">Add to Basket</button>
                 </div>
               </div>
             </div>
@@ -118,16 +133,18 @@
 
                           <div class="rating d-flex align-items-center rating-flex">
                             <div class="rate">
-                              <input type="radio" id="star5" name="rate" value="5" />
+ 
+                              <input type="radio" id="star5" name="rating" value="5" checked/>
                               <label for="star5" title="text">5 stars</label>
-                              <input type="radio" id="star4" name="rate" value="4" />
+                              <input type="radio" id="star4" name="rating" value="4" />
                               <label for="star4" title="text">4 stars</label>
-                              <input type="radio" id="star3" name="rate" value="3" />
+                              <input type="radio" id="star3" name="rating" value="3" />
                               <label for="star3" title="text">3 stars</label>
-                              <input type="radio" id="star2" name="rate" value="2" />
+                              <input type="radio" id="star2" name="rating" value="2" />
                               <label for="star2" title="text">2 stars</label>
-                              <input type="radio" id="star1" name="rate" value="1" />
+                              <input type="radio" id="star1" name="rating" value="1" />
                               <label for="star1" title="text">1 star</label>
+
 
                             </div>
                           </div>
@@ -169,16 +186,20 @@
                 <div class="comment-item-content d-flex">
                   <div class="comment-item-date d-flex text-muted w-100">
                     <div class="comment-item-name me-4">
-                      <span class="text-primary fw-bold">John Doe</span>
+                      <span class="text-primary fw-bold">{{comment.user.username}}</span>
                     </div>
-                    <span>SUBMITTED FROM 2 days ago</span>
+                    <span>SUBMITTED AT <span  class="text-primary">
+                      {{comment.date}}
+                    </span><span class="px-2 text-warning fw-bold">
+
+                      {{comment.rate}} Stars
+
+                    </span>
+                    </span>
                   </div>
                 </div>
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                  {{comment.text}}
                 </p>
               </div>
             </div>
@@ -192,7 +213,9 @@
   <script
     type="text/javascript"
     src="node_modules/mdbootstrap/js/jquery.min.js"
-  ></script>
+  >
+  
+</script>
   <script
     type="text/javascript"
     src="node_modules/mdbootstrap/js/popper.min.js"
@@ -205,6 +228,28 @@
     type="text/javascript"
     src="node_modules/mdbootstrap/js/mdb.min.js"
   ></script>
-  <script src="{static 'static/js/product.js'}"></script>
+  <script >
+    function changeImage(element) {
+      var main_prodcut_image = document.getElementById("main_product_image");
+      main_prodcut_image.src = element.src;
+    }
+
+
+    const add_to_cart = () => {
+      fetch("/cart/{{product.id}}", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+          body: JSON.stringify({quantity: document.getElementById("quantity").value})  
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          document.getElementById("message-container").innerHTML = "<div class='alert alert-success'>Product Added To The Cart </div>";
+        }).catch((e) => console.log(e.message));
+    }
+  </script>
 </body>
 {% endblock %}
