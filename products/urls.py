@@ -1,12 +1,19 @@
 from django.urls import path
-from .views import index , product,add_comment ,cart , add_to_cart
+from .views import index , product,add_comment ,product_with_cat,cart , profile ,not_found ,  add_to_cart ,login , logout,register,update_profile_image
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-        path('', index , name="home"),
+    path('', index , name="home"),
     path("product/<int:id>" , product , name="product"),
+    path("product/<cat>" , product_with_cat , name="product_with_cat"),
     path("cart/<int:product_id>" , add_to_cart , name = "add_to_cart"),
     path("cart" , cart , name = "cart"),
+    path("login" , login , name = "login"),
+    path("logout" , logout , name = "logout"),
+    path("register" , register , name = "register"),
     path("comment/<int:product_id>" , add_comment , name = "add_comment"),
+    path("profile" , profile , name = "profile"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

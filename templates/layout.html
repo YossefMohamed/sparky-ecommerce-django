@@ -34,15 +34,31 @@
         </button>
         <div class="collapse navbar-collapse" id="mynavbar">
           <ul class="navbar-nav me-auto">
+            {% if not user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="javascript:void(0)">Shop</a>
+              <a class="nav-link" href="/">Shop</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="javascript:void(0)">Login</a>
+              <a class="nav-link" href="/login">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="javascript:void(0)">Register</a>
+              <a class="nav-link" href="/register">Register</a>
             </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/">Shop</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/cart">cart</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/profile">profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">logout</a>
+            </li>
+            {% endif %}
+           
           </ul>
           <form class="d-flex">
             <input class="form-control me-2" type="text" placeholder="Search" />

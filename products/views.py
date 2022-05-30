@@ -1,19 +1,45 @@
 from email import message
 from statistics import quantiles
 from django.shortcuts import render
-from .models import Product , Comment , User , Cart
-from django.contrib.auth import authenticate, login, logout
+from .models import Product , Comment , CustomerUser , Cart
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
+
+login_required   =   login_required ( login_url = "login" )
+
+
+def login(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("home"))
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+        print(user)
+        if user is not None:
+            auth_login(request,user)
+            return HttpResponseRedirect(reverse("home"))
+        else:
+            return render(request, 'login.html' , {
+                "messages" : {
+                    "tag" : "danger",
+                    "message" : "Invalid username or password"
+                }
+            })
+    return render(request, 'login.html')
 
 def index(request):
     products = Product.objects.order_by("-date")
-    print( products[0].name)
+    # get new products
+    new_products = products[:3]
     return render(request, 'index.html' , {
-        "products" : products
+        "products" : products,
+        "new_products" : new_products
     })
 
 
@@ -33,28 +59,32 @@ def product(request, id , message=""):
             "comments" : comments
         })
 
+@login_required
+def logout(request):
+    auth_logout(request)
+    return HttpResponseRedirect(reverse("home"))
+
+
+
+
+@login_required
 @require_http_methods(["POST"])
 def add_comment(request , product_id):
     # try:
-    user = User.objects.get(id=1)
+    user = CustomerUser.objects.get(id=1)
     comment = Comment()
     comment.user = user
     comment.product = Product.objects.get(id=product_id)
     comment.text = request.POST["comment"]
     comment.rate = request.POST["rating"]
     comment = comment.save()
-    # except KeyError:
-    #     return render(reverse("product", kwargs={"id":product_id ,    "messages" : {
-    #              "tag" : "danger",
-    #         "message" : "Product not found"
-    #     }}))
     return HttpResponseRedirect(reverse("product", kwargs={"id": product_id}))
 
-
+@login_required
 @require_http_methods(["POST"])
 def add_to_cart(request , product_id):
     cart = Cart()
-    cart.user = User.objects.get(id=1)
+    cart.user = request.user
     cart.product = Product.objects.get(id=product_id)
     import json
     body = json.loads(request.body)
@@ -64,14 +94,96 @@ def add_to_cart(request , product_id):
 
 
 
-
+@login_required
 def cart(request):
-    try:
-        user = User.objects.get(id=1)
-        cart = Cart.objects.filter(user=user)
+    if request.method == "POST":
+        id = request.POST["cart"]
+        print(id)
+        cart = Cart.objects.filter(id=id).delete()
+        cart = Cart.objects.filter(user=request.user)
         return render(request , "cart.html" , {
-       "carts" : cart 
+       "carts" : cart ,
+       "carts_length" : len(cart) 
+
              })
-    except User.DoesNotExist or Cart.DoesNotExist:
-        return render(request , "cart.html")
+    else:
+        try:
+            cart = Cart.objects.filter(user=request.user)
+            return render(request , "cart.html" , {
+        "carts" : cart ,
+       "carts_length" : len(cart) 
+
+                })
+        except CustomerUser.DoesNotExist or Cart.DoesNotExist:
+             return HttpResponseRedirect(render(request , "cart.html"))
    
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("home"))
+    if request.method == "POST" :
+        try:
+            username = request.POST["username"]
+            email = request.POST["email"]
+            password = request.POST["password"]
+            user = CustomerUser.objects.create_user(username, email, password)
+            user.save()
+            logout(request)
+            return HttpResponseRedirect(reverse("login"))
+        except Exception as e:
+            return render(request , "register.html" , {"messages" : {
+                "tag" : "danger",
+                "message" : str(e) 
+            }})
+
+    return render(request , "register.html")
+
+
+@login_required
+def profile(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+        request.user.email = email
+        request.user.username = username
+        if len(request.POST["password"]) and request.POST["password"] == request.POST["confirm_password"]: 
+            request.user.password = request.POST["password"]
+        request.user.save()
+        print(request.user.password)
+        
+        return render(request , "profile.html" , {"image" : request.user.image.url,"name" : request.user.username , "email" : request.user.email }) 
+    return render(request , "profile.html" , {"image" : request.user.image.url,"name" : request.user.username , "email" : request.user.email }) 
+
+
+
+
+
+
+
+
+def not_found(request):
+    return render(request , "404.html")
+
+def product_with_cat(request,cat):
+    print(cat)
+    return render(request , "products-with-cat.html" , {
+        "cat" : cat 
+    })
+
+
+
+from django import forms
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
+
+
+
+
+@login_required
+def update_profile_image(request):
+    print(request.FILES["image"])
+
+    print( request.POST["image"])
+    return JsonResponse({"message" : "uploaded"})

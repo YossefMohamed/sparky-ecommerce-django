@@ -13,12 +13,13 @@
           <hr />
           <h6 class="mb-0">Shopping cart</h6>
           <div class="d-flex justify-content-between">
-            <span>You have {{carts|length}} items in your cart</span>
+            <span>You have <span id="cart_count">{{carts_length }} </span> items in your cart</span>
           </div>
 
           {% for cart in carts %}
           <div
-            class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded"
+            class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded "
+            id="cart-{{cart.id}}"
           >
             <div class="d-flex flex-row">
               <img
@@ -37,14 +38,12 @@
                 >{{cart.quantity}}</span
               ><span class="d-block ml-5 font-weight-bold"
                 >${{cart.product.price}}</span
-              ><i class="fa fa-trash-o mx-3 text-black-50"></i>
+              ><i class="fa fa-trash-o mx-3 text-black-50" onclick="deleteCartItem({{cart.id}})"></i>
             </div>
           </div>
 
           {% endfor %}
-          <div
-            class="d-flex justify-content-between align-items-center mt-3 p-2 items rounded"
-          ></div>
+        
         </div>
       </div>
       <div class="col-md-4">
@@ -149,5 +148,29 @@
     </div>
   </div>
 </div>
+
+
+<script>
+var cart_counter = {{carts_length}}
+const deleteCartItem = (id) =>{
+  const form = new FormData()
+  form.append("cart" , id)
+  fetch("/cart" , {
+    method : "post",
+    headers: {
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body : form
+  }).then(e => {
+document.getElementById("cart-"+id).style.setProperty("display", "none", "important")
+cart_counter = cart_counter -1
+document.getElementById("cart_count").innerText = cart_counter
+})
+}
+
+</script>
+
+
+
 
 {% endblock %}

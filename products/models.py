@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from datetime import datetime
 
@@ -44,14 +44,10 @@ class Product(models.Model):
 
 
 
-class User(AbstractBaseUser):
-    last_login = models.DateTimeField(auto_now=True)
-    username = models.CharField(max_length=200, unique=True,default="Tru@e.s")
-    email = models.EmailField(max_length = 60 , unique=True ,default="Tru@e.s")
-    is_admin = models.BooleanField(default=False)
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+class CustomerUser(AbstractUser):
+    image = models.ImageField(upload_to='images/user/%d',blank = True , null = True , default = "/images/avatar.png")
 
+    pass
     def __str__(self):
         return f"{self.username}"
 
@@ -61,7 +57,7 @@ class User(AbstractBaseUser):
 
 
 class Cart(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    user = models.ForeignKey('CustomerUser', on_delete=models.CASCADE)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     date = models.DateTimeField(default=datetime.now)
@@ -71,7 +67,7 @@ class Cart(models.Model):
 
 
 class Wishlist(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    user = models.ForeignKey('CustomerUser', on_delete=models.CASCADE)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     date = models.DateTimeField(default=datetime.now)
@@ -86,7 +82,7 @@ class Comment(models.Model):
     text = models.TextField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments")
     date = models.DateTimeField(default=datetime.now)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('CustomerUser', on_delete=models.CASCADE)
     rate = models.IntegerField(default=5)
     def __str__(self):
         return f"{self.text}\n{self.user}  - {self.date}"
