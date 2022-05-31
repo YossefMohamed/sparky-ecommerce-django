@@ -45,9 +45,10 @@ def index(request):
     })
 
 
-def product(request, id , message=""):
+def product(request, id):
     try:
         product = Product.objects.get(id=id)
+        print(product)
         comments = product.comments.all().order_by("-date")
     except Product.DoesNotExist:
         return render(request, '404.html' ,{
@@ -171,10 +172,21 @@ def not_found(request):
 def product_with_cat(request,cat):
     cats = ["phones" , "laptops" , "tablets" , "accessories"]
     if cat.lower() in cats:
-        products = Product.objects.filter(category=cat.lower())
+        if 'pages' in request.GET.keys():
+            current_page = int(request.GET["pages"]) -1
+        else:
+            current_page = 1 -1
+        skip = current_page * 9
+        products = Product.objects.filter(category=cat.lower())[skip:9]
+        products_number = Product.objects.filter(category=cat.lower()).count()
+        import math
+        pages = math.ceil(products_number/9)
+
         return render(request , "products-with-cat.html" , {
-            "cat" : cat.upper(),
-            "products" : products
+            "cat" : cat.lower(),
+            "products" : products,
+            "pages" : pages,
+            "current_page" : current_page +1
         })
     else : 
         return HttpResponseRedirect(reverse("home"))
