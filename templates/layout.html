@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="{% static 'static/css/index.css' %}" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <title>E-Commerce</title>
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
   </head>
   <body>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
@@ -33,36 +36,44 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mynavbar">
-          <ul class="navbar-nav me-auto">
+          <ul class="navbar-nav me-auto"> <li class="nav-item">
+            <li class="nav-item">
+              <a class="nav-link" href="/">SHOP</a>
+            </li>
+            <a class="nav-link" href="/product/phone">PHONE</a>
+          </li><li class="nav-item">
+            <a class="nav-link" href="/product/laptops">LAPTOPS</a>
+          </li><li class="nav-item">
+            <a class="nav-link" href="/product/accessories">ACCESSORIES</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/product/tablets">TABLETS</a>
+          </li>
             {% if not user.is_authenticated %}
+            
             <li class="nav-item">
-              <a class="nav-link" href="/">Shop</a>
+              <a class="nav-link" href="/login">LOGIN</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/register">Register</a>
+              <a class="nav-link" href="/register">REGISTER</a>
             </li>
             {% else %}
+           
             <li class="nav-item">
-              <a class="nav-link" href="/">Shop</a>
+              <a class="nav-link" href="/cart">CART</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/cart">cart</a>
+              <a class="nav-link" href="/profile">PROFILE</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/profile">profile</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">logout</a>
+              <a class="nav-link" href="/logout">LOGOUT</a>
             </li>
             {% endif %}
-           
+         
           </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="text" placeholder="Search" />
-            <button class="btn btn-primary" type="button">Search</button>
+          <form class="d-flex" action="/search" method="get">
+            <input class="form-control me-2" type="text" placeholder="Search" name="tag" required/>
+            <button class="btn btn-primary" type="submit">Search</button>
           </form>
         </div>
       </div>

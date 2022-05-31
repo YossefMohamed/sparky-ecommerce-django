@@ -84,15 +84,17 @@
                         <label for="quantity">Quantity</label>
                         <input
                           type="number"
-                          class="form-control"
+                          class="d-block w-100 my-3 p-2"
                           id="quantity"
                           name="quantity"
+                          min="1"
+                          max="9"
                           value="1"
+                          required
                         />
 
                 </div>
                 <div class="buttons d-flex flex-row mt-auto gap-3 bg-">
-                  <button class="btn btn-outline-dark">Buy Now</button>
                   <button class="btn btn-dark" onclick="add_to_cart()">Add to Basket</button>
                 </div>
               </div>
@@ -102,8 +104,12 @@
 
         <div class="comment-container">
           <div class="comment-header">
-            <h3>{{ comments.length }} Comments</h3>
+            <h3>{{ comments|length }} Comments</h3>
           </div>
+     
+
+
+          {% if user.is_authenticated %}
           <div class="comment-body">
             <div class="comment-item row">
               <div
@@ -111,7 +117,7 @@
               >
                 <div class="comment-item-image">
                   <img
-                    src="https://lh6.googleusercontent.com/-owL3dxEdL7Q/AAAAAAAAAAI/AAAAAAAAAGo/KCp26fo7gnc/photo.jpg?sz=64"
+                    src="{{request.user.image.url}}"
                     width="50"
                     height="50"
                   />
@@ -124,7 +130,7 @@
                     class="comment-item-date d-flex text-muted w-100 align-items-center"
                   >
                     <div class="comment-item-name me-4">
-                      <span class="text-primary fw-bold">John Doe</span>
+                      <span class="text-primary fw-bold">{{request.user.username}}</span>
                     </div>
 
 
@@ -163,6 +169,11 @@
               </div>
             </div>
           </div>
+          {% else %}
+          
+          <h3 class="alert alert-secondary my-4">Login To Rate This Product</h3>
+          
+          {% endif %}
         </div>
 
 
@@ -175,10 +186,11 @@
               >
                 <div class="comment-item-image">
                   <img
-                    src="https://lh6.googleusercontent.com/-owL3dxEdL7Q/AAAAAAAAAAI/AAAAAAAAAGo/KCp26fo7gnc/photo.jpg?sz=64"
+                    src="{{comment.user.image.url}}"
                     width="50"
                     height="50"
                   />
+                  
                 </div>
               </div>
 
