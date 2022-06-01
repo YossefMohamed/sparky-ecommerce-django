@@ -50,6 +50,14 @@ def product(request, id):
         product = Product.objects.get(id=id)
         print(product)
         comments = product.comments.all().order_by("-date")
+        rate = 0
+        for comment in comments:
+            rate += comment.rate
+        if len(comments) == 0 :
+            rate = 0;
+        else:
+            rate = rate / len(comments)
+        print(rate)
     except Product.DoesNotExist:
         return render(request, '404.html' ,{
              "messages" : {
@@ -57,9 +65,11 @@ def product(request, id):
             "message" : "Product not found"
         }
         })
+        
     return render(request, 'product.html' , {
             "product" : product,
-            "comments" : comments
+            "comments" : comments,
+            "rate" : range(int(rate))
         })
 
 @login_required
@@ -151,8 +161,6 @@ def profile(request):
         email = request.POST["email"]
         request.user.email = email
         request.user.username = username
-        if len(request.POST["password"]) and request.POST["password"] == request.POST["confirm_password"]: 
-            request.user.password = request.POST["password"]
         request.user.save()
         print(request.user.password)
         
@@ -193,26 +201,44 @@ def product_with_cat(request,cat):
 
 
 
-from django import forms
 
-class UploadFileForm(forms.Form):
-    file = forms.FileField()
-
-
-
+from django import forms  
+class StudentForm(forms.Form):  
+    file      = forms.FileField() # for creating file input  
 
 @login_required
 def update_profile_image(request):
     print(request.FILES["image"])
-    print( request.POST["image"])
+    print("fggffgfggffgfggffg")
+    print(request.POST["image"])
+    print(request.FILES["image"])
+    print("fggffgfggffgfggffg")
+    print(request.POST["image"])
+    print(request.FILES["image"])
+    print("fggffgfggffgfggffg")
+    print(request.POST["image"])
+    print(request.FILES["image"])
+    print("fggffgfggffgfggffg")
+    print(request.POST["image"])
     return JsonResponse({"message" : "uploaded"})
 
 
 
 def search(request):
     print(request.GET["tag"])
-    products = Product.objects.filter(name__contains=request.GET["tag"])
+    if 'pages' in request.GET.keys():
+        current_page = int(request.GET["pages"]) -1
+    else:
+        current_page = 1 -1
+    skip = current_page * 9
+    products = Product.objects.filter(name__contains=request.GET["tag"])[skip:9]
+    products_number = Product.objects.filter(name__contains=request.GET["tag"]).count()
+    import math
+    pages = math.ceil(products_number/9)
+
     return render(request , "products-with-search.html" , {
-            "cat" : f'You Have Searched For {request.GET["tag"].upper()}',
-            "products" : products
+            "cat" : request.GET["tag"],
+            "products" : products,
+            "pages" : pages,
+            "current_page" : current_page +1
         })

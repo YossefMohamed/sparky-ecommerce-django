@@ -15,6 +15,7 @@ urlpatterns = [
     path("comment/<int:product_id>" , add_comment , name = "add_comment"),
     path("search" , search , name = "search"),
     path("profile" , profile , name = "profile"),
+    path("update_profile_image" , update_profile_image , name = "update_profile_image"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
