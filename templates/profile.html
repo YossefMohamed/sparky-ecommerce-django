@@ -1,79 +1,98 @@
 {% extends "layout.html" %} {% block body %} {% load static %}
 <link rel="stylesheet" href="{% static 'static/css/profile.css' %}" />
 
-    <div class="container-fluid d-flex wrapper">
-      <div class="row">
-        <div class="col-md-8 m-auto">
-          <div class="card">
-            <div class="card-body p-6">
-              <input type="file" id="image_to_upload" />
-              <div class="row">
-                <div class="col-md-5 d-flex align-items-center">
-                  <img
-                    src="{{image}}"
-                    alt=""
-                    class="img-fluid"
-                    id="profile_image"
-                  />
-                </div>
-                <form
-                class="col-md-7 d-flex py-6 flex-column justify-content-around"
-                action="profile"
-                method = "post"
-              >{% csrf_token %}
-                <div>
-                  <label class="mt-1">
-                    <div>Name:</div>
-                  </label>
-                  <input type="text" value="{{name}}" class="w-100 p-1" name="username"/>
-                </div>
-                <div>
-                  <label class="mt-1">
-                    <div>Email:</div>
-                  </label>
-                  <input
-                    type="email"
-                    value="{{email}}"
-                    class="w-100 p-1"
-                    name="email"
-                  />
-                </div>
-               
-                <div>
-                  <button class="btn btn-primary mt-3" type="submit">
-                    Update
-                  </button>
-                </div>
-              </form>
-              </div>
+<div class="container-fluid d-flex wrapper">
+  <div class="row">
+    <div class="col-md-8 m-auto">
+      <div class="card">
+        <div class="card-body p-6">
+          <div class="row">
+            <div class="col-md-5 d-flex align-items-center">
+              <img
+                src="{{image}}"
+                alt=""
+                class="img-fluid"
+                id="profile_image"
+              />
             </div>
+            <form
+              class="col-md-7 d-flex py-6 flex-column justify-content-around"
+              action="profile"
+              method="post"
+              enctype="multipart/form-data"
+            >
+              {% csrf_token %}
+              <div>
+                <label class="mt-1">
+                  <div>Name:</div>
+                </label>
+                <input
+                  type="text"
+                  value="{{name}}"
+                  class="w-100 p-1"
+                  name="username"
+                />
+              </div>
+              <div>
+                <label class="mt-1">
+                  <div>Email:</div>
+                </label>
+                <input
+                  type="email"
+                  value="{{email}}"
+                  class="w-100 p-1"
+                  name="email"
+                />
+              </div>
+              <div>
+                <label class="mt-1">
+                  <div>Profile Picture:</div>
+                </label>
+                <input
+                  type="file"
+                  class="w-100 p-1"
+                  id="image_to_upload"
+                  name="image"
+                />
+              </div>
+              <div>
+                <button class="btn btn-primary mt-3" type="submit">
+                  Update
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
-    <script>
-const image_to_upload = document.getElementById("image_to_upload")
-const profile_image = document.getElementById("profile_image")
-profile_image.addEventListener("click" , ()=>{
-  image_to_upload.click()
-})
-image_to_upload.addEventListener("change" , (e)=>{
-  // e.target.value
-  var formData = new FormData();
-  formData.append("image", e.target.value);
-  fetch("update_profile_image",
-  
-    {
-      headers: {
-          "X-CSRFToken": "{{ csrf_token }}"
+  </div>
+</div>
+<script>
+  const image_to_upload = document.getElementById("image_to_upload");
+  const profile_image = document.getElementById("profile_image");
+  profile_image.addEventListener("click", () => {
+    image_to_upload.click();
+  });
+  {% comment %} image_to_upload.addEventListener("change", (e) => {
+    // e.target.value
+    var formData = new FormData();
+    formData.append("image", e.target.value);
+    fetch(
+      "update_profile_image",
+
+      {
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
         },
         body: formData,
-        method: "post"
-    }).then(response => response.json())
-        .then(data => {
-          console.log(data);
-        }).catch(e => console.log(e.message))
-
-})
-    </script>
-{% endblock %} 
+        method: "post",
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((e) => console.log(e.message));
+  }); {% endcomment %}
+</script>
+{% endblock %}

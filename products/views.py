@@ -154,17 +154,30 @@ def register(request):
     return render(request , "register.html")
 
 
+
+
+from django import forms  
+class StudentForm(forms.Form):  
+    username = forms.CharField(label="Enter first name",max_length=50)  
+    email     = forms.EmailField(label="Enter Email")  
+    image      = forms.FileField() # for creating file input  
+
+
+
+
 @login_required
 def profile(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
         request.user.email = email
+        if 'image' in request.FILES.keys():
+            request.user.image = request.FILES["image"]
         request.user.username = username
         request.user.save()
         print(request.user.password)
-        
         return render(request , "profile.html" , {"image" : request.user.image.url,"name" : request.user.username , "email" : request.user.email }) 
+
     return render(request , "profile.html" , {"image" : request.user.image.url,"name" : request.user.username , "email" : request.user.email }) 
 
 
