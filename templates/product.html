@@ -10,6 +10,8 @@
                 <div class="main_image">
                   <img
                   src="{{ product.image1.url }}"
+        alt="{{ product.description }}"
+
                     id="main_product_image"
                     width="350"
                   />
@@ -19,6 +21,8 @@
                     <li>
                       <img
                         onclick="changeImage(this)"
+        alt="{{ product.description }}"
+
                         src="{{ product.image2.url }}"                        width="70"
                       />
                     </li>
@@ -26,12 +30,16 @@
                     <li>
                       <img
                         onclick="changeImage(this)"
+        alt="{{ product.description }}"
+
                         src="{{ product.image3.url }}"                        width="70"
                       />
                     </li>
                     <li>
                       <img
                         onclick="changeImage(this)"
+        alt="{{ product.description }}"
+
                         src="{{ product.image4.url }}"                        width="70"
                       />
                     </li>

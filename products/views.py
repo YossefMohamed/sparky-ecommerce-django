@@ -156,13 +156,6 @@ def register(request):
 
 
 
-from django import forms  
-class StudentForm(forms.Form):  
-    username = forms.CharField(label="Enter first name",max_length=50)  
-    email     = forms.EmailField(label="Enter Email")  
-    image      = forms.FileField() # for creating file input  
-
-
 
 
 @login_required
@@ -197,7 +190,10 @@ def product_with_cat(request,cat):
             current_page = int(request.GET["pages"]) -1
         else:
             current_page = 1 -1
-        skip = current_page * 9
+        if current_page == 0 :
+            skip = 0
+        else:
+            skip = (current_page * 9) -1 
         products = Product.objects.filter(category=cat.lower())[skip:9]
         products_number = Product.objects.filter(category=cat.lower()).count()
         import math
@@ -215,35 +211,16 @@ def product_with_cat(request,cat):
 
 
 
-from django import forms  
-class StudentForm(forms.Form):  
-    file      = forms.FileField() # for creating file input  
-
-@login_required
-def update_profile_image(request):
-    print(request.FILES["image"])
-    print("fggffgfggffgfggffg")
-    print(request.POST["image"])
-    print(request.FILES["image"])
-    print("fggffgfggffgfggffg")
-    print(request.POST["image"])
-    print(request.FILES["image"])
-    print("fggffgfggffgfggffg")
-    print(request.POST["image"])
-    print(request.FILES["image"])
-    print("fggffgfggffgfggffg")
-    print(request.POST["image"])
-    return JsonResponse({"message" : "uploaded"})
-
-
-
 def search(request):
     print(request.GET["tag"])
     if 'pages' in request.GET.keys():
         current_page = int(request.GET["pages"]) -1
     else:
         current_page = 1 -1
-    skip = current_page * 9
+    if current_page == 0 :
+        skip = 0
+    else:
+        skip = (current_page * 9) -1    
     products = Product.objects.filter(name__contains=request.GET["tag"])[skip:9]
     products_number = Product.objects.filter(name__contains=request.GET["tag"]).count()
     import math

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index , product,add_comment ,search,product_with_cat,cart , profile ,not_found ,  add_to_cart ,login , logout,register,update_profile_image
+from .views import index , product,add_comment ,search,product_with_cat,cart , profile ,not_found ,  add_to_cart ,login , logout,register
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -15,7 +15,6 @@ urlpatterns = [
     path("comment/<int:product_id>" , add_comment , name = "add_comment"),
     path("search" , search , name = "search"),
     path("profile" , profile , name = "profile"),
-    path("update_profile_image" , update_profile_image , name = "update_profile_image"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

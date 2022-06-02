@@ -53,7 +53,9 @@
             <span>Card details</span
             ><img
               class="rounded"
-              src="https://i.imgur.com/WU501C8.jpg"
+              src="{{request.user.image.url}}"
+        alt="{{ product.description }}"
+
               width="30"
             />
           </div>
